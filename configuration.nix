@@ -14,7 +14,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "viltrum-0"; # Define your hostname.
+  networking.hostName = "bluedot"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -29,7 +29,6 @@
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "pt_BR.UTF-8";
@@ -50,12 +49,14 @@
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
-
   # Configure keymap in X11
   services.xserver.xkb = {
-    layout = "us";
-    variant = "";
+    layout = "br";
+    variant = "thinkpad";
   };
+
+  # Configure console keymap
+  console.keyMap = "br-abnt2";
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -80,55 +81,41 @@
   # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.indra = {
+  users.users.sloth = {
     isNormalUser = true;
-    description = "indra";
+    description = "Sloth";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-    steam
+      vim
+      git
+      
+      gnome-boxes
+      gnome-tweaks
+      gnome-extension-manager
+      gnomeExtensions.blur-my-shell
+      gnomeExtensions.dash-to-dock
+      gnomeExtensions.caffeine
+      
+      prismlauncher
+      vscodium
+      spotify
+      
+      syncthing
+      obsidian
     ];
   };
-  
+
   # Install firefox.
   programs.firefox.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  
-  # Allow nix-run e flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  wget
-  curl
-  htop
-  jq
-  git
-  neofetch
-  vscodium
-  kubectl
-  obsidian
-  kubernetes-helm
-  python314
-  python313
-  python39
-  pipx
-  docker
-  docker-compose
-  spotify
-  ansible
-  vlc
-  gnome-tweaks
-  gnomeExtensions.dash-to-dock
-  gnomeExtensions.blur-my-shell
-  gnomeExtensions.arcmenu
-  gnomeExtensions.caffeine
-  syncthing
-  chromium
+  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+  #  wget
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -157,5 +144,16 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
-
+  
+  
+  # Update automático
+  system.autoUpgrade.enable = true;
+  system.autoUpgrade.dates = "weekly";
+  
+  # Garbage Collector automático
+  nix.gc.automatic = true;
+  nix.gc.dates = "weekly";
+  nix.gc.options = "--delete-older-than 3m";
+  nix.settings.auto-optimise-store = true;
+  
 }
