@@ -92,6 +92,7 @@
       gnome-boxes
       gnome-tweaks
       gnome-extension-manager
+      gnomeExtensions.tiling-assistant
       gnomeExtensions.blur-my-shell
       gnomeExtensions.dash-to-dock
       gnomeExtensions.caffeine
@@ -99,14 +100,36 @@
       prismlauncher
       vscodium
       spotify
+
+      steam
       
       syncthing
       obsidian
     ];
   };
 
+  # Inicia o Syncthing com o login do usuário
+  systemd.user.services.syncthing = {
+    enable = true;
+    description = "Syncthing - Serviço de Sincronização de Arquivos";
+    wantedBy = [ "default.target" ]; # Inicia na sessão do usuário
+    after = [ "network.target" ];    # Aguarda a rede estar disponível
+    serviceConfig = {
+      ExecStart = "${pkgs.syncthing}/bin/syncthing";
+      Restart = "on-failure";
+    };
+  };
+
   # Install firefox.
   programs.firefox.enable = true;
+
+  # Install steam
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = false;                 # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = false;            # Open ports in the firewall for Source Dedicated Server
+    localNetworkGameTransfers.openFirewall = false;  # Open ports in the firewall for Steam Local Network Game Transfers
+  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -153,7 +176,7 @@
   # Garbage Collector automático
   nix.gc.automatic = true;
   nix.gc.dates = "weekly";
-  nix.gc.options = "--delete-older-than 3m";
+  nix.gc.options = "--delete-older-than 2w";
   nix.settings.auto-optimise-store = true;
   
 }
